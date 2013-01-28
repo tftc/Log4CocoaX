@@ -31,35 +31,35 @@ The above code does the following:
 
 To make Log4Cocoa easier, there are several high level macros, as follows (currently nothing is done with the exception; one of the layout classes would need to process it):
 
-For classes:
-log4Debug(message);
-log4Info(message);
-log4Warn(message);
-log4Error(message);
-log4Fatal(message);
-
-log4DebugWithException(message, e);
-log4InfoWithException(message, e);
-log4WarnWithException(message, e);
-log4ErrorWithException(message, e);
-log4FatalWithException(message, e);
-
-log4Assert(assertion, message);
-
-For functions:
-log4CDebug(message);
-log4CInfo(message);
-log4CWarn(message);
-log4CError(message);
-log4CFatal(message);
-
-log4CDebugWithException(message, e);
-log4CInfoWithException(message, e);
-log4CWarnWithException(message, e);
-log4CErrorWithException(message, e);
-log4CFatalWithException(message, e);
-
-log4CAssert(assertion, message);
+	For classes:
+	log4Debug(message);
+	log4Info(message);
+	log4Warn(message);
+	log4Error(message);
+	log4Fatal(message);
+	
+	log4DebugWithException(message, e);
+	log4InfoWithException(message, e);
+	log4WarnWithException(message, e);
+	log4ErrorWithException(message, e);
+	log4FatalWithException(message, e);
+	
+	log4Assert(assertion, message);
+	
+	For functions:
+	log4CDebug(message);
+	log4CInfo(message);
+	log4CWarn(message);
+	log4CError(message);
+	log4CFatal(message);
+	
+	log4CDebugWithException(message, e);
+	log4CInfoWithException(message, e);
+	log4CWarnWithException(message, e);
+	log4CErrorWithException(message, e);
+	log4CFatalWithException(message, e);
+	
+	log4CAssert(assertion, message);
 
 NOTE: when using the xxxWithException macros, the exception goes before any arguments to the message.  This is due to the way the macro expands and the way variable length arguments work.  Previously, you would wrap the message and it's arguments in parenthesis, followed by the exception.  Don't do that now.
 
@@ -151,7 +151,15 @@ log4cocoa.appender.A2.File=Library/LogFile.log
 
 That's all.
 
-# III. Embedding Log4Cocoa
+# III. Customize youself layout
+Subclass L4layout and implement "- (NSString *)format:(L4LogEvent *)event" method.
+Code like:
+	- (NSString *)format:(L4LogEvent *)event
+	{
+		return [NSString stringWithFormat:@"%@ %s at line :%d :%@", event.level, __FUNCTION__, __LINE__, event.message];
+	}
+
+# IV. Embedding Log4Cocoa
 
 To actually embed Log4Cocoa in your application, you'll need to add a copy phase to your build target.  Your application will run as long as Log4Cocoa is installed in your Framework search path but embedding it will make deployment much easier and gdb gets messed up when you use an embedded framework but don't actually embed it.
 
