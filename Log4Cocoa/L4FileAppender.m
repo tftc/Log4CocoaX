@@ -103,8 +103,8 @@
     }
     
     [fileName autorelease];
-    fileName = [[NSString stringWithFormat:@"%@/%@", dir, [fileName substringFromIndex:searchRange.length]] retain];
-    
+    fileName = [[NSString stringWithFormat:@"%@%@", dir, [fileName substringFromIndex:searchRange.length]] retain];
+        
 	@synchronized(self) {
         if (fileName == nil || [fileName length] <= 0) {
             [self closeFile];
@@ -114,6 +114,16 @@
         } else {
             
             fileManager = [NSFileManager defaultManager];
+            
+            NSMutableArray *components = [[fileName componentsSeparatedByString:@"/"] mutableCopy];
+            [components removeLastObject];
+            NSString *logDir = [components componentsJoinedByString:@"/"];
+            
+            if (![fileManager fileExistsAtPath:logDir]) {
+                if (![fileManager createDirectoryAtPath:logDir withIntermediateDirectories:YES attributes:nil error:nil]) {
+                    [NSException raise:@"DirectoryNotFoundException" format:@"Could not create a directory at %@", logDir];
+                }
+            }
             
             // if file doesn't exist, try to create the file
             if (![fileManager fileExistsAtPath:fileName]) {
