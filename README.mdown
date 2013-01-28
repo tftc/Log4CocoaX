@@ -1,4 +1,6 @@
 ## Log4Cocoa Usage (May 4, 2011)
+## Mod (Jan 28, 2013) Added usage of properties file and iOS file log path rules specification.
+
 Read COPYRIGHT
 
 This document will (hopefully) soon undergo radical redesign & rewriting.  Until then, use the forums or e-mail me.
@@ -7,7 +9,7 @@ NOTE: I've removed L4LogManager;  I did this because all the code did was class 
 
 See below for usage.
 
-# I. Usage
+# I. Usage by coding.
 To use this framework for logging, in your applications main method, do something liek the following:
 	// initialize the logging system.
 	[[L4Logger rootLogger] setLevel:[L4Level all]];
@@ -107,7 +109,49 @@ Since, +logger; & -logger; are implemented as categories on NSObject, you can ov
 
 For setting level of logging for methods, there is a convenience class L4FunctionLogger that serves; however, keep in mind that any changes to the log level here effect logging from all methods.
 
-# II. Embedding Log4Cocoa
+# II. Usage by properties file.
+
+Add a file to your project using name whatever you want.I use log4debug.cfg for example.
+
+Fill the file ...
+(1) Commonly log.
+//#Configurate rootLogger.
+log4cocoa.rootLogger=DEBUG, A1
+
+//#Configurate appender
+log4cocoa.appender.A1.layout=L4PatternLayout #required!
+log4cocoa.appender.A1=L4ConsoleAppender		#required!
+
+Then, coding in your main().
+NSString *path = [[NSBundle mainBundle] pathForResource:@"log4debug.cfg" ofType:@""];
+L4PropertyConfigurator *configurator = [[L4PropertyConfigurator alloc] initWithProperties:[L4Properties propertiesWithFileName:path]];
+[configurator configure];
+
+Now, you can use log4Info(), log4Warn() ....
+(2) File Log.
+//#Configurate file appender
+log4cocoa.appender.A2.layout=L4SimpleLayout
+log4cocoa.appender.A2=L4FileAppender
+log4cocoa.appender.A2.MaximumFileSize=1.5MB
+
+#Important
+ Change the path rules for iOS.
+ Using relative path like below:
+ 
+ log4cocoa.appender.A2.File=Documents/YourDir/YourFileName
+ 
+ log4cocoa.appender.A2.File=Library/YourDir/YourFileName
+ 
+ log4cocoa.appender.A2.File=tmp/YourDir/YourFileName
+ 
+ //Doesn't support this path, will throw an exception by OS.
+ log4cocoa.appender.A2.File=YourDir/YourFileName
+
+log4cocoa.appender.A2.File=Library/LogFile.log
+
+That's all.
+
+# III. Embedding Log4Cocoa
 
 To actually embed Log4Cocoa in your application, you'll need to add a copy phase to your build target.  Your application will run as long as Log4Cocoa is installed in your Framework search path but embedding it will make deployment much easier and gdb gets messed up when you use an embedded framework but don't actually embed it.
 
