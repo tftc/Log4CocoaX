@@ -65,6 +65,84 @@
 	[super dealloc];
 }
 
+#if TARGET_OS_IPHONE
+/**
+ 
+ Mod by Deheng.Xu @2013.1.28
+ 
+ Change the path rules for iOS.
+ Using relative path like below:
+ 
+ log4cocoa.appender.A2.File=Documents/YourDir/YourFileName
+ 
+ log4cocoa.appender.A2.File=Library/YourDir/YourFileName
+ 
+ log4cocoa.appender.A2.File=tmp/YourDir/YourFileName
+ 
+ //Doesn't support this path, will throw an exception by OS.
+ log4cocoa.appender.A2.File=YourDir/YourFileName
+ 
+ */
+- (void)setupFile
+{
+	NSFileManager*	fileManager = nil;
+    
+    NSString *dir = nil;
+    NSRange searchRange = NSMakeRange(NSNotFound, 0);
+    if ((searchRange = [fileName rangeOfString:@"Documents"]).location == 0) {
+        NSArray * result = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        dir = [result lastObject];
+    }else if ((searchRange = [fileName rangeOfString:@"Library"]).location == 0) {
+        NSArray * result = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        dir = [result lastObject];
+    }else if ((searchRange = [fileName rangeOfString:@"tmp"]).location == 0) {
+        dir = NSTemporaryDirectory();
+    }else {
+        NSArray * result = NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES);
+        dir = [result lastObject];
+    }
+    
+    [fileName autorelease];
+    fileName = [[NSString stringWithFormat:@"%@/%@", dir, [fileName substringFromIndex:searchRange.length]] retain];
+    
+	@synchronized(self) {
+        if (fileName == nil || [fileName length] <= 0) {
+            [self closeFile];
+            [fileName release];
+            fileName = nil;
+            [self setFileHandle:nil];
+        } else {
+            
+            fileManager = [NSFileManager defaultManager];
+            
+            // if file doesn't exist, try to create the file
+            if (![fileManager fileExistsAtPath:fileName]) {
+                // if the we cannot create the file, raise a FileNotFoundException
+                if (![fileManager createFileAtPath:fileName contents:nil attributes:nil]) {
+                    [NSException raise:@"FileNotFoundException" format:@"Couldn't create a file at %@", fileName];
+                }
+            }
+            
+            // if we had a previous file name, close it and release the file handle
+            if (fileName != nil) {
+                [self closeFile];
+            }
+            
+            // open a file handle to the file
+            [self setFileHandle:[NSFileHandle fileHandleForWritingAtPath:fileName]];
+            
+            // check the append option
+            if (append) {
+                [fileHandle seekToEndOfFile];
+            } else {
+                [fileHandle truncateFileAtOffset:0];
+            }
+        }
+    }
+}
+
+#else
+
 - (void)setupFile
 {
 	NSFileManager*	fileManager = nil;
@@ -104,6 +182,8 @@
         }
     }
 }
+
+#endif
 
 - (NSString *) fileName
 {
