@@ -114,46 +114,48 @@ For setting level of logging for methods, there is a convenience class L4Functio
 Add a file to your project using name whatever you want.I use log4debug.cfg for example.
 
 Fill the file ...
-(1) Commonly log.
-//#Configurate rootLogger.
-log4cocoa.rootLogger=DEBUG, A1
 
-//#Configurate appender
-log4cocoa.appender.A1.layout=L4PatternLayout #required!
-log4cocoa.appender.A1=L4ConsoleAppender		#required!
-
-Then, coding in your main().
-NSString *path = [[NSBundle mainBundle] pathForResource:@"log4debug.cfg" ofType:@""];
-L4PropertyConfigurator *configurator = [[L4PropertyConfigurator alloc] initWithProperties:[L4Properties propertiesWithFileName:path]];
-[configurator configure];
-
-Now, you can use log4Info(), log4Warn() ....
-(2) File Log.
-//#Configurate file appender
-log4cocoa.appender.A2.layout=L4SimpleLayout
-log4cocoa.appender.A2=L4FileAppender
-log4cocoa.appender.A2.MaximumFileSize=1.5MB
+	(1) Commonly log.
+	//#Configurate rootLogger.
+	log4cocoa.rootLogger=DEBUG, A1
+	
+	//#Configurate appender
+	log4cocoa.appender.A1.layout=L4PatternLayout #required!
+	log4cocoa.appender.A1=L4ConsoleAppender		#required!
+	
+	Then, coding in your main().
+	NSString *path = [[NSBundle mainBundle] pathForResource:@"log4debug.cfg" ofType:@""];
+	L4PropertyConfigurator *configurator = [[L4PropertyConfigurator alloc] initWithProperties:[L4Properties propertiesWithFileName:path]];
+	[configurator configure];
+	
+	Now, you can use log4Info(), log4Warn() ....
+	(2) File Log.
+	//#Configurate file appender
+	log4cocoa.appender.A2.layout=L4SimpleLayout
+	log4cocoa.appender.A2=L4FileAppender
+	log4cocoa.appender.A2.MaximumFileSize=1.5MB
 
 #Important
- Change the path rules for iOS.
- Using relative path like below:
- 
- log4cocoa.appender.A2.File=Documents/YourDir/YourFileName
- 
- log4cocoa.appender.A2.File=Library/YourDir/YourFileName
- 
- log4cocoa.appender.A2.File=tmp/YourDir/YourFileName
- 
- //Doesn't support this path, will throw an exception by OS.
- log4cocoa.appender.A2.File=YourDir/YourFileName
-
-log4cocoa.appender.A2.File=Library/LogFile.log
+Change the path rules for iOS.
+Using relative path like below:
+	
+	log4cocoa.appender.A2.File=Documents/YourDir/YourFileName
+	
+	log4cocoa.appender.A2.File=Library/YourDir/YourFileName
+	
+	log4cocoa.appender.A2.File=tmp/YourDir/YourFileName
+	
+	//Doesn't support this path, will throw an exception by OS.
+	log4cocoa.appender.A2.File=YourDir/YourFileName
+	
+	log4cocoa.appender.A2.File=Library/LogFile.log
 
 That's all.
 
 # III. Customize youself layout
 Subclass L4layout and implement "- (NSString *)format:(L4LogEvent *)event" method.
 Code like:
+
 	- (NSString *)format:(L4LogEvent *)event
 	{
 		return [NSString stringWithFormat:@"%@ %s at line :%d :%@", event.level, __FUNCTION__, __LINE__, event.message];
