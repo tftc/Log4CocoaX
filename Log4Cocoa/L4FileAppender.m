@@ -82,6 +82,8 @@
  //Doesn't support this path, will throw an exception by OS.
  log4cocoa.appender.A2.File=YourDir/YourFileName
  
+ YourFileName rule:xxx<date:format>
+ 
  */
 - (void)setupFile
 {
@@ -103,6 +105,17 @@
     }
     
     [fileName autorelease];
+    
+    NSString *namePattern = [[[fileName substringFromIndex:searchRange.length] pathComponents] lastObject];
+    printf("namePattern :%s\n", CharFromString(namePattern));
+    
+    NSString *regex = @"<date:[(a-z)|(: _)|(A-Z)]{0,}>";
+    TRY_BEGIN
+    NSString *found = [namePattern substringWithRange:[namePattern rangeOfString:regex options:NSRegularExpressionSearch]];
+    NSString *format = [found substringWithRange:NSMakeRange(@"<date:".length, found.length - 2)];
+    printf("found:%s   %s\n", CharFromString(found), CharFromString(format));
+    TRY_CATCH
+    
     fileName = [[NSString stringWithFormat:@"%@%@", dir, [fileName substringFromIndex:searchRange.length]] retain];
         
 	@synchronized(self) {
