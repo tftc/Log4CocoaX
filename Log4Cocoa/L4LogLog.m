@@ -12,7 +12,7 @@ static NSData *lineBreakChar;
 @implementation L4LogLog
 + (void) initialize
 {
-	lineBreakChar = [[@"\n" dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES] retain];
+	lineBreakChar = [[@"\n" dataUsingEncoding:USING_CHAR_ENCODING allowLossyConversion:YES] retain];
 }
 
 + (BOOL) internalDebuggingEnabled
@@ -94,13 +94,13 @@ static NSData *lineBreakChar;
 {
 	@try {
 		[fileHandle writeData:
-		 [[prefix stringByAppendingString:message] dataUsingEncoding:NSASCIIStringEncoding
+		 [[prefix stringByAppendingString:message] dataUsingEncoding:USING_CHAR_ENCODING
 												allowLossyConversion:YES]];
 		[fileHandle writeData:lineBreakChar];
 		
 		if( exception != nil ) {
 			[fileHandle writeData:
-			 [[prefix stringByAppendingString:[exception description]] dataUsingEncoding:NSASCIIStringEncoding 
+			 [[prefix stringByAppendingString:[exception description]] dataUsingEncoding:USING_CHAR_ENCODING 
 																	allowLossyConversion:YES]];
 			[fileHandle writeData:lineBreakChar];
 		}

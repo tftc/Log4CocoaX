@@ -74,3 +74,19 @@ LOG4COCOA_EXTERN void log4Log(id object, int line, const char *file, const char 
 /* ********************************************************************* */
 #define log4CAssert(assertion, message, ...) log4Log(L4C_ASSERTION(assertion), message, ##__VA_ARGS__)
 
+
+//add by Deheng.Xu 2013.02
+
+#define TRY_BEGIN   @try {
+
+#define TRY_CATCH   }\
+@catch (NSException *exception) {\
+printf("%s:%d   %s:\n%s\n", __FUNCTION__, (__LINE__ - 1), CharFromString([exception name]), CharFromString([exception reason]));\
+[[NSException exceptionWithName:[NSString stringWithFormat:@"\n%s file name error! line:%d", __FUNCTION__, (__LINE__ - 1)] reason:[exception reason] userInfo:nil] raise];\
+}
+
+#ifndef CharFromString
+#define CharFromString(string)  [string cStringUsingEncoding:NSUTF8StringEncoding]
+#endif
+
+

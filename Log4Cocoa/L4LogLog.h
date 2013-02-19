@@ -4,6 +4,8 @@
 #define  L4LogLog_WARN_PREFIX @"log4cocoa: WARN: "
 #define L4LogLog_ERROR_PREFIX @"log4cocoa: ERROR: "
 
+#define USING_CHAR_ENCODING     NSUTF8StringEncoding
+
 /**
  * This class is used to log when the logging system could not be properly initialized.  It logs to either stdout or
  * stderr depending on the severity of the message.  

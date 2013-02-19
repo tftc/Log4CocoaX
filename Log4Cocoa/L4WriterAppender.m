@@ -9,7 +9,7 @@ static NSData *lineBreakChar;
 
 + (void) initialize
 {
-    lineBreakChar = [[@"\n" dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES] retain];
+    lineBreakChar = [[@"\n" dataUsingEncoding:USING_CHAR_ENCODING allowLossyConversion:YES] retain];
 }
 
 - (id) init
@@ -134,7 +134,7 @@ static NSData *lineBreakChar;
                 // TODO ### -- NEED UNIX EXPERT IS THIS THE BEST WAY ??
                 // TODO - ### - NEED TO WORK ON ENCODING ISSUES (& THEN LATER LOCALIZATION)
                 //
-                [fileHandle writeData:[theString dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES]];
+                [fileHandle writeData:[theString dataUsingEncoding:USING_CHAR_ENCODING allowLossyConversion:YES]];
                 [fileHandle writeData:lineBreakChar];
             }
 		}
