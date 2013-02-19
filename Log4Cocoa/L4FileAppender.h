@@ -42,6 +42,8 @@
 */
 - (id) initWithLayout:(L4Layout *) aLayout fileName:(NSString *) aName;
 
+- (NSString *) parseTag:(NSString *)fileTag;
+
 /**
  * Initializes an L4FileAppender instance with the specified layout, file path name, and append option.
  * This method calls <code>initWithLayout:fileName:append:bufferIO:bufferSize:</code> with the specified layout, file name, and append
