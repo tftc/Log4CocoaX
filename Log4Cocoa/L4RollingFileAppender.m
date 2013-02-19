@@ -211,6 +211,10 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
 		if (![fileManager moveItemAtPath:tempOldFileName toPath:tempNewFileName error:nil]) {
 			[L4LogLog error:[NSString stringWithFormat:@"Unable to move file %@ to %@!", tempOldFileName, tempNewFileName]];
 		}
+        
+        NSString *name = [[self loadFileName] retain];
+        [fileName release];
+        fileName = name;
 	}
 }
 @end
