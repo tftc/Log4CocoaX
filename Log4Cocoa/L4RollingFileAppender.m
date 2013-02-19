@@ -185,21 +185,28 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
 		}
 		
 		// create the new name of the file
+#if 1
+        tempNewFileName = [NSString stringWithFormat:@"%@.%d.%@",
+                           [[self fileName] stringByDeletingPathExtension],
+                           (backupIndex + 1), tempPathExtension];
+#else
 		if ([tempPathExtension length] <= 0) {
-			tempNewFileName = [NSString stringWithFormat:@"%@.%d", 
+			tempNewFileName = [NSString stringWithFormat:@"%@.%d",
 							   [[self fileName] stringByDeletingPathExtension], 
 							   (backupIndex + 1)];
 		} else {
-			tempNewFileName = [NSString stringWithFormat:@"%@.%d.%@", 
-							   [[[self fileName] stringByDeletingPathExtension] stringByDeletingPathExtension], 
+			tempNewFileName = [NSString stringWithFormat:@"%@.%d.%@",
+							   [[[self fileName] stringByDeletingPathExtension] stringByDeletingPathExtension],
 							   (backupIndex + 1), tempPathExtension];
 		}
-		
+#endif
+        
 		// if the new file name already exists, recursively call this method with the new file name's backup index
 		if ([fileManager fileExistsAtPath:tempNewFileName]) {
 			[self renameLogFile:(backupIndex + 1)];
 		}
-		
+		printf("%s  %s \n", CharFromString(tempPathExtension), CharFromString(tempNewFileName));
+        
 		// rename the old file
 		if (![fileManager moveItemAtPath:tempOldFileName toPath:tempNewFileName error:nil]) {
 			[L4LogLog error:[NSString stringWithFormat:@"Unable to move file %@ to %@!", tempOldFileName, tempNewFileName]];

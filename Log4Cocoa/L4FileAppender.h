@@ -11,6 +11,7 @@
 {
 	BOOL			append; /**< Tracks if we should append or over-right.*/
 	NSString*		fileName; /**< The name of the file we write to.*/
+    L4Properties    *properties;
 }
 
 /**
@@ -61,6 +62,8 @@
  * @return The path to the file to which log output should be written.
  */
 - (NSString *) fileName;
+
+- (NSString *) loadFileName;
 
 /**
  * The append option of this object.

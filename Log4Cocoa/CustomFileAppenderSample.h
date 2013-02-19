@@ -6,8 +6,8 @@
 //
 //
 
-#import "L4FileAppender.h"
+#import "L4RollingFileAppender.h"
 
-@interface CustomFileAppenderSample : L4FileAppender
+@interface CustomFileAppenderSample : L4RollingFileAppender
 
 @end

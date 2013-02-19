@@ -23,7 +23,8 @@
 - (id) initWithProperties:(L4Properties *) initProperties
 {    
     self = [super initWithProperties:initProperties];
-    
+    properties = [initProperties retain];
+
     if ( self != nil ) {
         // Support for appender.File in properties configuration file
         NSString *buf = [initProperties stringForKey:@"File"];
@@ -193,6 +194,53 @@
     }
 }
 
+- (NSString *)loadFileName
+{
+    NSString *_loadNewFileName = nil;
+
+    NSString *buf = [properties stringForKey:@"File"];
+    _loadNewFileName = [[buf stringByExpandingTildeInPath] retain];
+    
+    NSString *dir = nil;
+    NSRange searchRange = NSMakeRange(NSNotFound, 0);
+    if ((searchRange = [_loadNewFileName rangeOfString:@"Documents"]).location == 0) {
+        NSArray * result = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+        dir = [result lastObject];
+    }else if ((searchRange = [_loadNewFileName rangeOfString:@"Library"]).location == 0) {
+        NSArray * result = NSSearchPathForDirectoriesInDomains(NSLibraryDirectory, NSUserDomainMask, YES);
+        dir = [result lastObject];
+    }else if ((searchRange = [_loadNewFileName rangeOfString:@"tmp"]).location == 0) {
+        dir = NSTemporaryDirectory();
+    }else {
+        NSArray * result = NSSearchPathForDirectoriesInDomains(NSApplicationDirectory, NSUserDomainMask, YES);
+        dir = [result lastObject];
+    }
+    
+    [_loadNewFileName autorelease];
+    
+    //Scrab tag only for subclass.
+    //    if (self.class != [L4FileAppender class] && [self isKindOfClass:[L4FileAppender class]]) {
+    NSRange foundRange = NSMakeRange(NSNotFound, 0);
+    NSString *regexStr = @"<[(a-z)|(A-Z)|(0-9)|(: _)]{0,}>";
+    NSString *replace = nil;
+    do {
+        foundRange = [_loadNewFileName rangeOfString:regexStr options:NSRegularExpressionSearch];
+        printf("->%s\n", CharFromString(NSStringFromRange(foundRange)));
+        if (foundRange.length) {
+            replace = [self parseTag:[_loadNewFileName substringWithRange:foundRange]];
+            if (!replace) {
+                continue;
+            }
+            [self _setFileName:[_loadNewFileName stringByReplacingCharactersInRange:foundRange withString:replace]];
+        }
+    } while (foundRange.length);
+    //    }
+    
+    [self _setFileName:[NSString stringWithFormat:@"%@%@", dir, [_loadNewFileName substringFromIndex:searchRange.length]]];
+    
+    printf("New log file name:%s\n", CharFromString(_loadNewFileName));
+    return _loadNewFileName;
+}
 
 /**
 
