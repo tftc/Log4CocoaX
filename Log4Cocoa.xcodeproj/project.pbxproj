@@ -70,6 +70,8 @@
 		0DE9859714C36A7F001E0E1A /* Log4CocoaDefines.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DE9855914C36A7F001E0E1A /* Log4CocoaDefines.h */; };
 		0DE9859814C36A7F001E0E1A /* NSObject+Log4Cocoa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0DE9855A14C36A7F001E0E1A /* NSObject+Log4Cocoa.h */; };
 		0DE9859914C36A7F001E0E1A /* NSObject+Log4Cocoa.m in Sources */ = {isa = PBXBuildFile; fileRef = 0DE9855B14C36A7F001E0E1A /* NSObject+Log4Cocoa.m */; };
+		A204856316D357A8007959C2 /* CustomFileAppenderSample.h in Headers */ = {isa = PBXBuildFile; fileRef = A204856116D357A8007959C2 /* CustomFileAppenderSample.h */; };
+		A204856416D357A8007959C2 /* CustomFileAppenderSample.m in Sources */ = {isa = PBXBuildFile; fileRef = A204856216D357A8007959C2 /* CustomFileAppenderSample.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -138,6 +140,8 @@
 		0DE9855914C36A7F001E0E1A /* Log4CocoaDefines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Log4CocoaDefines.h; sourceTree = "<group>"; };
 		0DE9855A14C36A7F001E0E1A /* NSObject+Log4Cocoa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+Log4Cocoa.h"; sourceTree = "<group>"; };
 		0DE9855B14C36A7F001E0E1A /* NSObject+Log4Cocoa.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+Log4Cocoa.m"; sourceTree = "<group>"; };
+		A204856116D357A8007959C2 /* CustomFileAppenderSample.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomFileAppenderSample.h; sourceTree = "<group>"; };
+		A204856216D357A8007959C2 /* CustomFileAppenderSample.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomFileAppenderSample.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -195,6 +199,8 @@
 				0DE9852A14C36A7F001E0E1A /* L4DenyAllFilter.m */,
 				0DE9852B14C36A7F001E0E1A /* L4FileAppender.h */,
 				0DE9852C14C36A7F001E0E1A /* L4FileAppender.m */,
+				A204856116D357A8007959C2 /* CustomFileAppenderSample.h */,
+				A204856216D357A8007959C2 /* CustomFileAppenderSample.m */,
 				0DE9852D14C36A7F001E0E1A /* L4Filter.h */,
 				0DE9852E14C36A7F001E0E1A /* L4Filter.m */,
 				0DE9852F14C36A7F001E0E1A /* L4JSONLayout.h */,
@@ -295,6 +301,7 @@
 				0DE9859614C36A7F001E0E1A /* Log4Cocoa.h in Headers */,
 				0DE9859714C36A7F001E0E1A /* Log4CocoaDefines.h in Headers */,
 				0DE9859814C36A7F001E0E1A /* NSObject+Log4Cocoa.h in Headers */,
+				A204856316D357A8007959C2 /* CustomFileAppenderSample.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -378,6 +385,7 @@
 				0DE9859314C36A7F001E0E1A /* L4WriterAppender.m in Sources */,
 				0DE9859514C36A7F001E0E1A /* L4XMLLayout.m in Sources */,
 				0DE9859914C36A7F001E0E1A /* NSObject+Log4Cocoa.m in Sources */,
+				A204856416D357A8007959C2 /* CustomFileAppenderSample.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
