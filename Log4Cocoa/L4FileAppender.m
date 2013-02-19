@@ -6,6 +6,13 @@
 #import "L4Layout.h"
 #import "L4LogLog.h"
 
+
+@interface L4FileAppender ()
+
+- (void)_setFileName:(NSString *)theName;
+
+@end
+
 @implementation L4FileAppender
 
 - (id) init
@@ -66,6 +73,17 @@
 }
 
 #if TARGET_OS_IPHONE
+
+- (void)_setFileName:(NSString *)theName
+{
+    if (fileName == theName) {
+        return ;
+    }
+    [theName retain];
+    [fileName release];
+    fileName = theName;
+}
+
 /**
  
  Mod by Deheng.Xu @2013.1.28
@@ -82,7 +100,10 @@
  //Doesn't support this path, will throw an exception by OS.
  log4cocoa.appender.A2.File=YourDir/YourFileName
  
- YourFileName rule:xxx<date:format>
+ YourFileName rule:
+ <date:format>, Replace date time string with current place by 'format' style.
+ <version>, Replace app build version with current place.
+ <bundleIdentifier>,    Replace app bundle identifier with current place.
  
  */
 - (void)setupFile
@@ -106,18 +127,40 @@
     
     [fileName autorelease];
     
+    //Scrab tag.
+    NSString *foundedTag = nil;
+    ///---------------------------Add date string to file name dynamicly.
     NSString *namePattern = [[[fileName substringFromIndex:searchRange.length] pathComponents] lastObject];
-    printf("namePattern :%s\n", CharFromString(namePattern));
-    
-    NSString *regex = @"<date:[(a-z)|(: _)|(A-Z)]{0,}>";
+    NSString *dateRegex = @"<date:[(a-z)|(0-9)|(. _)|(A-Z)]{0,}>";
+    NSDateFormatter *formatter = [[[NSDateFormatter alloc] init] autorelease];
     TRY_BEGIN
-    NSString *found = [namePattern substringWithRange:[namePattern rangeOfString:regex options:NSRegularExpressionSearch]];
-    NSString *format = [found substringWithRange:NSMakeRange(@"<date:".length, found.length - 2)];
-    printf("found:%s   %s\n", CharFromString(found), CharFromString(format));
+    foundedTag = [namePattern substringWithRange:[namePattern rangeOfString:dateRegex options:NSRegularExpressionSearch]];
+    NSString *format = [foundedTag substringWithRange:NSMakeRange(@"<date:".length, foundedTag.length - 1 - @"<date:".length)];
+    [formatter setDateFormat:format];
+    printf("found:%s   %s\n", CharFromString(foundedTag), CharFromString(format));
     TRY_CATCH
     
-    fileName = [[NSString stringWithFormat:@"%@%@", dir, [fileName substringFromIndex:searchRange.length]] retain];
-        
+    //get full path name.
+    [self _setFileName:[[NSString stringWithFormat:@"%@%@", dir, [fileName substringFromIndex:searchRange.length]] retain]];
+    //replace pattern with specific string.
+    [self _setFileName:[fileName stringByReplacingOccurrencesOfString:foundedTag withString:[formatter stringFromDate:[NSDate date]]]];
+    
+    ///--------------------------Add app version automically.
+    NSString *versionRegex = @"<version>";
+    NSRange verTagRange = [fileName rangeOfString:versionRegex options:NSRegularExpressionSearch];
+    if (verTagRange.location != NSNotFound) {
+        [self _setFileName:[fileName stringByReplacingOccurrencesOfString:versionRegex withString:[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleVersion"]]];
+    }
+    
+    ///--------------------------Add Bundle identifier.
+    NSString *bundleIdRegex = @"<bundleIdentifier>";
+    NSRange bundleIdRange = [fileName rangeOfString:bundleIdRegex options:NSRegularExpressionSearch];
+    if (bundleIdRange.location != NSNotFound) {
+        [self _setFileName:[fileName stringByReplacingOccurrencesOfString:bundleIdRegex withString:[[[NSBundle mainBundle] infoDictionary] valueForKey:@"CFBundleIdentifier"]]];
+    }
+    
+    printf("New log file name:%s\n", CharFromString(fileName));
+    
 	@synchronized(self) {
         if (fileName == nil || [fileName length] <= 0) {
             [self closeFile];
