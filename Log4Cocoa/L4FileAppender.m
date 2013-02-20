@@ -313,8 +313,6 @@
         dir = [result lastObject];
     }
     
-    [_loadNewFileName autorelease];
-    
     //Scrab tag only for subclass.
 //    if (self.class != [L4FileAppender class] && [self isKindOfClass:[L4FileAppender class]]) {
     NSRange foundRange = NSMakeRange(NSNotFound, 0);
@@ -334,6 +332,7 @@
             NSString *_tmp = [_loadNewFileName stringByReplacingCharactersInRange:foundRange withString:replace];
             printf("%s %d %s", __FUNCTION__, __LINE__, CharFromString(_tmp));
             if (!_loadNewFileName || ![_loadNewFileName isEqualToString:_tmp]) {
+                [_loadNewFileName release];
                 _loadNewFileName = [_tmp retain];
                 _tmp = nil;
             }
@@ -341,11 +340,12 @@
     } while (foundRange.length);
 //    }
     
-    _tmp = [NSString stringWithFormat:@"%@%@", dir, [_loadNewFileName substringFromIndex:searchRange.length]];
+    _tmp = [[NSString stringWithFormat:@"%@%@", dir, [_loadNewFileName substringFromIndex:searchRange.length]] retain];
+    [_loadNewFileName release];
     _loadNewFileName = _tmp;
     
     printf("New log file name:%s\n", CharFromString(_loadNewFileName));
-    return _loadNewFileName;
+    return [_loadNewFileName autorelease];
 }
 
 - (BOOL) append
