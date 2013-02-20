@@ -10,8 +10,8 @@
 @interface L4FileAppender : L4WriterAppender
 {
 	BOOL			append; /**< Tracks if we should append or over-right.*/
+    NSString*       fileNamePattern; /** Retain the name pattern. by DehengXu.*/
 	NSString*		fileName; /**< The name of the file we write to.*/
-    L4Properties    *properties;
 }
 
 /**
@@ -43,7 +43,7 @@
 */
 - (id) initWithLayout:(L4Layout *) aLayout fileName:(NSString *) aName;
 
-- (NSString *) parseTag:(NSString *)fileTag;
+- (NSString *) parseTag:(NSString *)fileTag inName:(NSString *)aName;
 
 /**
  * Initializes an L4FileAppender instance with the specified layout, file path name, and append option.
@@ -63,7 +63,9 @@
  */
 - (NSString *) fileName;
 
-- (NSString *) loadFileName;
+- (NSString *) fileNamePattern;
+
+- (NSString *) updateFileName;
 
 /**
  * The append option of this object.

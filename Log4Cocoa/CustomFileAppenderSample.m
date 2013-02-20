@@ -20,13 +20,13 @@
  <bundleIdentifier>,    Replace app bundle identifier with current place.
 
  */
-- (NSString *)parseTag:(NSString *)fileTag
+- (NSString *)parseTag:(NSString *)fileTag inName:(NSString *)aName
 {
     //Todo:do you own tag parsing.
     if (NO/*you condition*/) {
         
     }
-    return [super parseTag:fileTag];
+    return [super parseTag:fileTag inName:aName];
 }
 
 @end
