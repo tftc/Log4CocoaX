@@ -17,6 +17,7 @@ extern const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize;
 {
 	unsigned int		maxBackupIndex; /**< The number of old files to keep; by default, this is 1.*/
 	unsigned long long	maxFileSize; /**< The max size a log file is allowed to be; by default, this is 10MB.*/
+    BOOL rollingEnable; /** Enable rolling when the size more than maxFileSize; Default, it's YES.*/
 }
 
 /**

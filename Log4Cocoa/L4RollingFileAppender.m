@@ -36,6 +36,7 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
     if ( self != nil ) {
         unsigned int newMaxFileSize = kL4RollingFileAppenderDefaultMaxFileSize;
         unsigned int newMaxBackupIndex = 1;
+        rollingEnable = YES;
         
         // Support for appender.MaximumFileSize in properties configuration file
         if ( [initProperties stringForKey:@"MaximumFileSize"] != nil ) {
@@ -55,6 +56,12 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
             newMaxBackupIndex = atoi([buf UTF8String]);
         }
 		
+        // New feature support for appender.RollingEnable.
+        if ([initProperties stringForKey:@"RollingEnable"] != nil) {
+            NSString *buf = [[initProperties stringForKey:@"RollingEnable"] uppercaseString];
+            rollingEnable = (([buf isEqualToString:@"1"]) || ([buf isEqualToString:@"YES"]) || ([buf isEqualToString:@"TRUE"]));
+        }
+        
         [self setMaximumFileSize:newMaxFileSize];
         [self setMaxBackupIndex:newMaxBackupIndex];
     }
@@ -126,7 +133,11 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
     @synchronized(self) {
         // if the file's size has exceeded maximumFileSize, roll the file over
         if ([fileHandle offsetInFile] >= [self maximumFileSize]) {
-            [self rollOver];
+            if (rollingEnable) {
+                [self rollOver];
+            }else {
+                [self closeFile];
+            }
         }
         
         // use the superclass's subAppend
@@ -185,10 +196,20 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
 		}
 		
 		// create the new name of the file
+        printf("%s  %d  update new name!\n", __FUNCTION__, __LINE__);
+        NSString *_name = [[self updateFileName] retain];
+        BOOL isSameNewName = [_name isEqualToString:fileName];
+        
 #if 1
-        tempNewFileName = [NSString stringWithFormat:@"%@.%d.%@",
-                           [[self fileName] stringByDeletingPathExtension],
-                           (backupIndex + 1), tempPathExtension];
+        if (!isSameNewName) {
+            tempNewFileName = [NSString stringWithFormat:@"%@.%@",
+                               [[self fileName] stringByDeletingPathExtension],
+                               tempPathExtension];
+        }else {
+            tempNewFileName = [NSString stringWithFormat:@"%@.%d.%@",
+                               [[self fileName] stringByDeletingPathExtension],
+                               (backupIndex + 1), tempPathExtension];
+        }
 #else
 		if ([tempPathExtension length] <= 0) {
 			tempNewFileName = [NSString stringWithFormat:@"%@.%d",
@@ -212,10 +233,13 @@ const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024
 			[L4LogLog error:[NSString stringWithFormat:@"Unable to move file %@ to %@!", tempOldFileName, tempNewFileName]];
 		}
         
-        printf("%s  %d  update new name!\n", __FUNCTION__, __LINE__);
-        NSString *_name = [[self updateFileName] retain];
-        [fileName release];
-        fileName = _name;
+        //Is not same new file name.
+        if (!isSameNewName) {
+            [fileName release];
+            fileName = _name;
+        }else {
+            [_name release];
+        }
 	}
 }
 @end
