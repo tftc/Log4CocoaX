@@ -6,6 +6,7 @@
 #import "L4Layout.h"
 #import "L4LogEvent.h"
 #import "L4LogLog.h"
+#import "L4Logging.h"
 
 const unsigned long long kL4RollingFileAppenderDefaultMaxFileSize = (1024 * 1024 * 10);
 
